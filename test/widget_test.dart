@@ -15,9 +15,18 @@ void main() {
   ) async {
     await tester.pumpWidget(const MyApp());
 
+    final badge = find.ancestor(
+      of: find.text('Status: Online'),
+      matching: find.byType(AnimatedContainer),
+    );
+
     expect(find.text('Flutter Theme Lab'), findsOneWidget);
     expect(find.byType(CircleAvatar), findsOneWidget);
-    expect(find.byType(AnimatedContainer), findsOneWidget);
+    expect(badge, findsOneWidget);
+    expect(
+      tester.widget<AnimatedContainer>(badge).duration,
+      const Duration(milliseconds: 400),
+    );
     expect(find.byType(Switch), findsOneWidget);
     expect(find.byIcon(Icons.circle_outlined), findsOneWidget);
     expect(find.byIcon(Icons.check_circle), findsNothing);
