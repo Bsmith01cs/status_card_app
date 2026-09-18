@@ -7,6 +7,10 @@ void main() {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  // Feature 1: one seed color per mode generates the whole Material 3 palette.
+  static const Color lightSeed = Colors.amber;
+  static const Color darkSeed = Colors.teal;
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -20,40 +24,30 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  // Custom themes here
-  ThemeData get lightTheme {
+  // Custom themes here. Every surface and text color below is read from the
+  // generated ColorScheme instead of being hand-picked, so changing a seed
+  // restyles the app and keeps Material 3 contrast pairings intact.
+  ThemeData themeFromSeed(Color seed, Brightness brightness) {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: seed,
+      brightness: brightness,
+    );
+
     return ThemeData(
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.amber,
-        brightness: Brightness.light,
-      ),
-      scaffoldBackgroundColor: Colors.amber.shade50,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.amber,
-        foregroundColor: Colors.black,
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: colorScheme.surface,
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         centerTitle: true,
       ),
     );
   }
 
-  ThemeData get darkTheme {
-    return ThemeData(
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.teal,
-        brightness: Brightness.dark,
-      ),
-      scaffoldBackgroundColor: const Color(0xFF121212),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-      ),
-    );
-  }
+  ThemeData get lightTheme => themeFromSeed(MyApp.lightSeed, Brightness.light);
 
-  //Step 3
+  ThemeData get darkTheme => themeFromSeed(MyApp.darkSeed, Brightness.dark);
 
   @override
   Widget build(BuildContext context) {

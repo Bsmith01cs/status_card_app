@@ -43,4 +43,33 @@ void main() {
       ThemeMode.dark,
     );
   });
+
+  testWidgets('both themes are Material 3 schemes generated from a seed', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+
+    for (final entry in {
+      app.theme!: Brightness.light,
+      app.darkTheme!: Brightness.dark,
+    }.entries) {
+      final theme = entry.key;
+      final seed = entry.value == Brightness.light
+          ? MyApp.lightSeed
+          : MyApp.darkSeed;
+
+      expect(theme.useMaterial3, isTrue);
+      expect(theme.brightness, entry.value);
+      expect(
+        theme.colorScheme,
+        ColorScheme.fromSeed(seedColor: seed, brightness: entry.value),
+      );
+      expect(theme.scaffoldBackgroundColor, theme.colorScheme.surface);
+      expect(
+        theme.appBarTheme.backgroundColor,
+        theme.colorScheme.primaryContainer,
+      );
+    }
+  });
 }
